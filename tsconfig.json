@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": false,
+    "forceConsistentCasingInFileNames": true,
+    "allowJs": true,
+    "allowUnreachableCode": false,
+    "noImplicitAny": false,
+    "sourceMap": true,
+    "strictPropertyInitialization": false,
+    "moduleResolution": "node",
+    "lib": ["dom", "esnext"]
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
+}
