@@ -3,7 +3,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
 const config = {
-  gameName: 'Super Dragons Lair'
+  gameName: 'Climber Plumber'
 }
 
 module.exports = {
