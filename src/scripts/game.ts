@@ -1,7 +1,7 @@
 import 'phaser';
 import MainScene from './scenes/mainScene';
 import PreloadScene from './scenes/preloadScene';
-import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from './config';
+import { DEFAULT_HEIGHT, DEFAULT_WIDTH, isDev } from './config';
 
 const config = {
   type: Phaser.AUTO,
@@ -17,8 +17,8 @@ const config = {
   physics: {
     default: 'arcade',
     arcade: {
-      debug: false,
-      gravity: { y: 400 },
+      debug: isDev,
+      gravity: { y: 1000 },
     },
   },
 };

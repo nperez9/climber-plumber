@@ -1,3 +1,5 @@
+import { isDev } from '../config';
+
 export default class FpsText extends Phaser.GameObjects.Text {
   constructor(scene) {
     super(scene, 10, 10, '', { color: '#FFF', fontSize: '28px' });
@@ -6,6 +8,8 @@ export default class FpsText extends Phaser.GameObjects.Text {
   }
 
   public update() {
-    this.setText(`fps: ${Math.floor(this.scene.game.loop.actualFps)}`);
+    if (isDev) {
+      this.setText(`fps: ${Math.floor(this.scene.game.loop.actualFps)}`);
+    }
   }
 }
