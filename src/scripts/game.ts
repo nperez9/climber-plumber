@@ -1,7 +1,6 @@
 import 'phaser';
 import MainScene from './scenes/mainScene';
 import PreloadScene from './scenes/preloadScene';
-import WinScene from './scenes/conditions/winScene';
 import { DEFAULT_HEIGHT, DEFAULT_WIDTH } from './config';
 
 const config = {
@@ -14,7 +13,7 @@ const config = {
     width: DEFAULT_WIDTH,
     height: DEFAULT_HEIGHT,
   },
-  scene: [PreloadScene, MainScene, WinScene],
+  scene: [PreloadScene, MainScene],
   physics: {
     default: 'arcade',
     arcade: {
