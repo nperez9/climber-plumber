@@ -1,15 +1,19 @@
-import { Sprites } from '../objects/Sprites';
+import { PlayerAnim } from '../constants/PlayerAnimation';
+import { Sprites } from '../constants/Sprites';
 import FpsText from '../objects/fpsText';
-import { Group, SpriteWithDynamicBody } from '../types';
+import { Cursors, Group, SpriteWithDynamicBody } from '../types';
 
 export default class MainScene extends Phaser.Scene {
-  fpsText: FpsText;
-  screenWidth: number;
-  screenHeigth: number;
+  private fpsText: FpsText;
+  private screenWidth: number;
+  private screenHeigth: number;
 
-  private ground: SpriteWithDynamicBody;
   private player: SpriteWithDynamicBody;
+  public velocity: number = 100;
+  this;
+
   private platforms: Group;
+  private cursors: Cursors;
 
   constructor() {
     super({ key: 'MainScene' });
@@ -21,7 +25,6 @@ export default class MainScene extends Phaser.Scene {
     this.screenHeigth = this.sys.game.config.height as number;
 
     this.platforms = this.add.group();
-
     // Ground Config
     const ground = this.add.sprite(0, 604, Sprites.Ground).setOrigin(0, 0.5);
     this.physics.add.existing(ground, true);
@@ -42,11 +45,45 @@ export default class MainScene extends Phaser.Scene {
 
     // Playerr
     this.player = this.physics.add.sprite(180, 300, Sprites.Player, 3);
+    this.anims.create({
+      key: PlayerAnim.Walk,
+      frames: this.anims.generateFrameNames(Sprites.Player, {
+        // pick the anim frames
+        frames: [0, 1, 2],
+      }),
+      // yoyo = repeat (why this confusing name?)
+      frameRate: 12,
+      yoyo: true,
+      repeat: -1,
+    });
 
+    // colliders
     this.physics.add.collider(this.platforms, this.player);
+
+    // cursors
+    this.cursors = this.input.keyboard.createCursorKeys();
   }
 
   update() {
     this.fpsText.update();
+
+    if (this.cursors.left.isDown) {
+      this.player.body.setVelocityX(-this.velocity);
+      this.player.flipX = false;
+      if (!this.player.anims.isPlaying) {
+        this.player.anims.play(PlayerAnim.Walk);
+      }
+    } else if (this.cursors.right.isDown) {
+      this.player.body.setVelocityX(this.velocity);
+      this.player.flipX = true;
+      if (!this.player.anims.isPlaying) {
+        this.player.anims.play(PlayerAnim.Walk);
+      }
+    } else {
+      this.player.body.setVelocityX(0);
+      //@ts-ignore
+      this.player.anims.stop(PlayerAnim.Walk);
+      this.player.setFrame(3);
+    }
   }
 }

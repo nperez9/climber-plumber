@@ -1,4 +1,4 @@
-import { Sprites } from '../objects/Sprites';
+import { Sprites } from '../constants/Sprites';
 
 export default class PreloadScene extends Phaser.Scene {
   constructor() {
