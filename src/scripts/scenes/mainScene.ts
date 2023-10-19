@@ -1,4 +1,4 @@
-import { PlayerAnim } from '../constants/PlayerAnimation';
+import { PlayerAnim, playerFrames } from '../constants/PlayerAnimation';
 import { Sprites } from '../constants/Sprites';
 import FpsText from '../objects/fpsText';
 import { Cursors, Group, SpriteWithDynamicBody } from '../types';
@@ -10,7 +10,7 @@ export default class MainScene extends Phaser.Scene {
 
   private player: SpriteWithDynamicBody;
   public velocity: number = 100;
-  this;
+  public jumpForce: number = 500;
 
   private platforms: Group;
   private cursors: Cursors;
@@ -23,6 +23,9 @@ export default class MainScene extends Phaser.Scene {
     this.fpsText = new FpsText(this).setDepth(100);
     this.screenWidth = this.sys.game.config.width as number;
     this.screenHeigth = this.sys.game.config.height as number;
+
+    this.physics.world.bounds.width = this.screenWidth;
+    this.physics.world.bounds.height = this.screenHeigth;
 
     this.platforms = this.add.group();
     // Ground Config
@@ -49,13 +52,14 @@ export default class MainScene extends Phaser.Scene {
       key: PlayerAnim.Walk,
       frames: this.anims.generateFrameNames(Sprites.Player, {
         // pick the anim frames
-        frames: [0, 1, 2],
+        frames: playerFrames.walk,
       }),
       // yoyo = repeat (why this confusing name?)
       frameRate: 12,
       yoyo: true,
       repeat: -1,
     });
+    this.player.body.setCollideWorldBounds(true);
 
     // colliders
     this.physics.add.collider(this.platforms, this.player);
@@ -66,6 +70,11 @@ export default class MainScene extends Phaser.Scene {
 
   update() {
     this.fpsText.update();
+    this.movePlayer();
+  }
+
+  private movePlayer() {
+    const isOnGround = this.player.body.blocked.down || this.player.body.touching.down;
 
     if (this.cursors.left.isDown) {
       this.player.body.setVelocityX(-this.velocity);
@@ -83,7 +92,17 @@ export default class MainScene extends Phaser.Scene {
       this.player.body.setVelocityX(0);
       //@ts-ignore
       this.player.anims.stop(PlayerAnim.Walk);
-      this.player.setFrame(3);
+      this.player.setFrame(playerFrames.idle);
+    }
+
+    // jumping
+    if ((this.cursors.space.isDown || this.cursors.up.isDown) && isOnGround) {
+      this.player.body.setVelocityY(-this.jumpForce);
+    }
+
+    if (!isOnGround) {
+      this.player.anims.stop();
+      this.player.setFrame(playerFrames.jump);
     }
   }
 }
