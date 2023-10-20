@@ -95,6 +95,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.physics.world.bounds.width = this.screenWidth;
     this.physics.world.bounds.height = this.screenHeigth;
+    this.add.sprite(0, 0, Sprites.Backgorund).setOrigin(0);
 
     this.setupLevel();
     this.setupFireEnemies();

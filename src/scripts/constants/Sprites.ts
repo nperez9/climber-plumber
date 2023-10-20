@@ -6,4 +6,5 @@ export enum Sprites {
   Platform = 'platform',
   Fire = 'fire',
   Player = 'player',
+  Backgorund = 'background',
 }

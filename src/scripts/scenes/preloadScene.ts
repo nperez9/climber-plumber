@@ -13,6 +13,7 @@ export default class PreloadScene extends Phaser.Scene {
     this.load.image(Sprites.Gorilla, 'assets/sprites/gorilla.png');
     this.load.image(Sprites.Ground, 'assets/sprites/ground.png');
     this.load.image(Sprites.Platform, 'assets/sprites/platform.png');
+    this.load.image(Sprites.Backgorund, 'assets/sprites/background.png');
 
     this.load.spritesheet(Sprites.Fire, 'assets/spritesheets/fire_spritesheet.png', {
       frameWidth: 20,
