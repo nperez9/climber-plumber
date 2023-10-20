@@ -27,7 +27,7 @@ export default class MainScene extends Phaser.Scene {
   private setupLevel(): void {
     this.levelData = this.cache.json.get(LEVELS.One);
 
-    this.platforms = this.add.group();
+    this.platforms = this.physics.add.staticGroup(); // better perforamnce
     this.levelData.platforms.map(({ x, y, key, numTiles }) => {
       let plaform;
       if (numTiles > 1) {
@@ -45,11 +45,12 @@ export default class MainScene extends Phaser.Scene {
   }
 
   private setupFireEnemies(): void {
-    this.fires = this.add.group();
+    this.fires = this.physics.add.group({
+      allowGravity: false,
+      immovable: false,
+    });
     this.levelData.fireEnemies.map(({ x, y }) => {
-      const fire = this.physics.add.sprite(x, y, Sprites.Fire).setOrigin(0);
-      fire.body.allowGravity = false;
-      fire.body.immovable = true;
+      const fire = this.add.sprite(x, y, Sprites.Fire).setOrigin(0);
       fire.anims.play('burn');
       this.fires.add(fire);
 
@@ -102,8 +103,7 @@ export default class MainScene extends Phaser.Scene {
     this.setupPlayer();
     this.setupCursor();
 
-    this.physics.add.collider(this.platforms, this.player);
-    this.physics.add.collider(this.platforms, this.goal);
+    this.physics.add.collider(this.platforms, [this.player, this.goal]);
   }
 
   update() {
