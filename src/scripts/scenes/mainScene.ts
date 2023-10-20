@@ -1,9 +1,9 @@
-import { PlayerAnim, playerFrames, Sprites, TILES_SIZE } from '../constants';
+import { isDev } from '../config';
+import { PlayerAnim, playerFrames, Sprites } from '../constants';
 import { LEVELS } from '../constants/Levels';
 import FpsText from '../objects/fpsText';
-import { Cursors, Group, SpriteWithDynamicBody } from '../types';
-import { LevelData } from '../types/level';
-import { getSpriteDimension } from '../utils/getSpriteDimensions';
+import { Cursors, Group, SpriteWithDynamicBody, LevelData } from '../types';
+import { twoDecimalFormat, getSpriteDimension } from '../utils';
 
 export default class MainScene extends Phaser.Scene {
   private fpsText: FpsText;
@@ -14,7 +14,9 @@ export default class MainScene extends Phaser.Scene {
   public velocity: number = 150;
   public jumpForce: number = 600;
 
+  private goal;
   private platforms: Group;
+  private fires: Group;
   private cursors: Cursors;
   private levelData: LevelData;
 
@@ -24,8 +26,8 @@ export default class MainScene extends Phaser.Scene {
 
   private setupLevel(): void {
     this.levelData = this.cache.json.get(LEVELS.One);
-    this.platforms = this.add.group();
 
+    this.platforms = this.add.group();
     this.levelData.platforms.map(({ x, y, key, numTiles }) => {
       let plaform;
       if (numTiles > 1) {
@@ -42,20 +44,35 @@ export default class MainScene extends Phaser.Scene {
     });
   }
 
-  private setupPlayer(): void {
-    this.player = this.physics.add.sprite(180, 300, Sprites.Player, 3);
-    this.anims.create({
-      key: PlayerAnim.Walk,
-      frames: this.anims.generateFrameNames(Sprites.Player, {
-        // pick the anim frames
-        frames: playerFrames.walk,
-      }),
-      // yoyo = repeat (why this confusing name?)
-      frameRate: 12,
-      yoyo: true,
-      repeat: -1,
+  private setupFireEnemies(): void {
+    this.fires = this.add.group();
+    this.levelData.fireEnemies.map(({ x, y }) => {
+      const fire = this.physics.add.sprite(x, y, Sprites.Fire).setOrigin(0);
+      fire.body.allowGravity = false;
+      fire.body.immovable = true;
+      fire.anims.play('burn');
+      this.fires.add(fire);
+
+      if (isDev) {
+        fire.setInteractive();
+        this.input.setDraggable(fire);
+        this.input.on('drag', (pointer, gameObject, dragX, dragY) => {
+          gameObject.x = dragX;
+          gameObject.y = dragY;
+
+          console.log('Fire Drag', twoDecimalFormat(dragX), twoDecimalFormat(dragY));
+        });
+      }
     });
+  }
+
+  private setupPlayer(): void {
+    const { x, y } = this.levelData.player;
+    this.player = this.physics.add.sprite(x, y, Sprites.Player, 3);
     this.player.body.setCollideWorldBounds(true);
+
+    const goalPos = this.levelData.goal;
+    this.goal = this.physics.add.sprite(goalPos.x, goalPos.y, Sprites.Gorilla).setOrigin(0);
   }
 
   private setupCursor(): void {
@@ -63,9 +80,12 @@ export default class MainScene extends Phaser.Scene {
     this.cursors = this.input.keyboard.createCursorKeys();
 
     // to get coordinates
-    this.input.on('pointerdown', (pointer) => {
-      console.info(pointer.x, pointer.y);
-    });
+    if (isDev) {
+      this.input.on('pointerdown', (pointer) => {
+        const { x, y } = pointer;
+        console.info(twoDecimalFormat(x), twoDecimalFormat(y));
+      });
+    }
   }
 
   create() {
@@ -77,10 +97,12 @@ export default class MainScene extends Phaser.Scene {
     this.physics.world.bounds.height = this.screenHeigth;
 
     this.setupLevel();
+    this.setupFireEnemies();
     this.setupPlayer();
     this.setupCursor();
 
     this.physics.add.collider(this.platforms, this.player);
+    this.physics.add.collider(this.platforms, this.goal);
   }
 
   update() {

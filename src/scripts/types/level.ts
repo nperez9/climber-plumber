@@ -1,10 +1,16 @@
 export interface LevelData {
-  platforms: Platforms[];
+  platforms: Platform[];
+  fireEnemies?: Position[];
+  player: Position;
+  goal: Position;
 }
 
-export interface Platforms {
+export interface Position {
   x: number;
   y: number;
+}
+
+export interface Platform extends Position {
   numTiles: number;
   key: string;
 }

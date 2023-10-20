@@ -1,3 +1,4 @@
+import { PlayerAnim, playerFrames } from '../constants';
 import { LEVELS } from '../constants/Levels';
 import { Sprites } from '../constants/Sprites';
 
@@ -30,6 +31,25 @@ export default class PreloadScene extends Phaser.Scene {
   }
 
   create() {
+    this.anims.create({
+      key: 'burn',
+      frames: this.anims.generateFrameNames(Sprites.Fire, {
+        frames: [0, 1],
+      }),
+      frameRate: 4,
+      repeat: -1,
+    });
+
+    this.anims.create({
+      key: PlayerAnim.Walk,
+      frames: this.anims.generateFrameNames(Sprites.Player, {
+        frames: playerFrames.walk,
+      }),
+      frameRate: 12,
+      yoyo: true,
+      repeat: -1,
+    });
+
     this.scene.start('MainScene');
   }
 }
