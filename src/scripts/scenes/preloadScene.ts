@@ -1,3 +1,4 @@
+import { LEVELS } from '../constants/Levels';
 import { Sprites } from '../constants/Sprites';
 
 export default class PreloadScene extends Phaser.Scene {
@@ -24,6 +25,8 @@ export default class PreloadScene extends Phaser.Scene {
       margin: 1,
       spacing: 1,
     });
+
+    this.load.json(LEVELS.One, 'assets/levels/level1.json');
   }
 
   create() {
