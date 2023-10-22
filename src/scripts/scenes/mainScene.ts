@@ -9,6 +9,7 @@ export default class MainScene extends Phaser.Scene {
   private fpsText: FpsText;
   private screenWidth: number;
   private screenHeigth: number;
+  private endgame: boolean = false;
 
   private player: SpriteWithDynamicBody;
   public velocity: number = 150;
@@ -96,6 +97,8 @@ export default class MainScene extends Phaser.Scene {
 
     this.physics.world.bounds.width = this.screenWidth;
     this.physics.world.bounds.height = this.screenHeigth;
+    this.cameras.main.setBounds(0, 0, this.screenWidth, this.screenHeigth);
+
     this.add.sprite(0, 0, Sprites.Backgorund).setOrigin(0);
 
     this.setupLevel();
@@ -103,12 +106,24 @@ export default class MainScene extends Phaser.Scene {
     this.setupPlayer();
     this.setupCursor();
 
+    this.cameras.main.startFollow(this.player);
+
+    this.endgame = false;
     this.physics.add.collider(this.platforms, [this.player, this.goal]);
+    this.physics.add.overlap(this.player, [this.fires, this.goal], this.restartGame, null, this);
   }
 
   update() {
     this.fpsText.update();
     this.movePlayer();
+  }
+
+  private restartGame(sourceSprite, targetSprite): void {
+    this.cameras.main.fade(500);
+    this.endgame = true;
+    this.cameras.main.on('camerafadeoutcomplete', () => {
+      this.scene.restart();
+    });
   }
 
   private movePlayer() {
