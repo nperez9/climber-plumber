@@ -114,6 +114,10 @@ export default class MainScene extends Phaser.Scene {
   }
 
   update() {
+    if (this.endgame) {
+      this.stopMan();
+      return;
+    }
     this.fpsText.update();
     this.movePlayer();
   }
@@ -142,10 +146,7 @@ export default class MainScene extends Phaser.Scene {
         this.player.anims.play(PlayerAnim.Walk);
       }
     } else {
-      this.player.body.setVelocityX(0);
-      //@ts-ignore
-      this.player.anims.stop(PlayerAnim.Walk);
-      this.player.setFrame(playerFrames.idle);
+      this.stopMan();
     }
 
     // jumping
@@ -157,5 +158,12 @@ export default class MainScene extends Phaser.Scene {
       this.player.anims.stop();
       this.player.setFrame(playerFrames.jump);
     }
+  }
+
+  private stopMan() {
+    this.player.body.setVelocityX(0);
+    //@ts-ignore
+    this.player.anims.stop(PlayerAnim.Walk);
+    this.player.setFrame(playerFrames.idle);
   }
 }
