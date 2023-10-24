@@ -104,7 +104,13 @@ export default class MainScene extends Phaser.Scene {
       loop: true,
       callbackScope: this,
       callback: () => {
-        const barrel = this.barrels.create(this.goal.x, this.goal.y, Sprites.Barrel).setOrigin(1, 1);
+        // implements object pooling
+        console.info('barrels pooling', this.barrels.getChildren().length);
+
+        const barrel = this.barrels.get(this.goal.x, this.goal.y, Sprites.Barrel).setOrigin(1, 1);
+        barrel.setActive(true);
+        barrel.setVisible(true);
+        barrel.body.enable = true;
         barrel.setVelocityX(spawner.speed);
 
         this.time.addEvent({
@@ -112,7 +118,9 @@ export default class MainScene extends Phaser.Scene {
           repeat: 0,
           callbackScope: this,
           callback: () => {
-            barrel.destroy();
+            // add to the main stuff
+            this.barrels.killAndHide(barrel);
+            barrel.body.enable = false;
           },
         });
       },
@@ -139,7 +147,7 @@ export default class MainScene extends Phaser.Scene {
 
     this.endgame = false;
     this.physics.add.collider(this.platforms, [this.player, this.goal, this.barrels]);
-    this.physics.add.overlap(this.player, [this.fires, this.goal], this.restartGame, null, this);
+    this.physics.add.overlap(this.player, [this.fires, this.goal, this.barrels], this.restartGame, null, this);
   }
 
   update() {

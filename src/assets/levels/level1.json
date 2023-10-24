@@ -1,18 +1,18 @@
 {
   "world": {
     "width": 360,
-    "height": 700
+    "height": 720
   },
   "spawner": {
-    "interval": 1000,
-    "speed": 100,
-    "lifespan": 10000
+    "interval": 3000,
+    "speed": 80,
+    "lifespan": 18000
   },
   "platforms": [
     { "x": 150, "y": 500, "numTiles": 6, "key": "block" },
     { "x": 0, "y": 370, "numTiles": 8, "key": "block" },
     { "x": 72, "y": 210, "numTiles": 8, "key": "block" },
-    { "x": 0, "y": 70, "numTiles": 7, "key": "block" },
+    { "x": 0, "y": 75, "numTiles": 7, "key": "block" },
     { "x": 0, "y": 630, "numTiles": 1, "key": "ground" }
   ],
   "fireEnemies": [
@@ -30,7 +30,7 @@
     },
     {
       "x": 120,
-      "y": 650
+      "y": 630
     }
   ],
   "player": {
