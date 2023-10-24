@@ -91,7 +91,33 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
-  private setupSpawner(): void {}
+  private setupSpawner(): void {
+    this.barrels = this.physics.add.group({
+      bounceY: 0.1,
+      bounceX: 1,
+      collideWorldBounds: true,
+    });
+
+    const { spawner } = this.levelData;
+    const spawnEvent = this.time.addEvent({
+      delay: spawner.interval,
+      loop: true,
+      callbackScope: this,
+      callback: () => {
+        const barrel = this.barrels.create(this.goal.x, this.goal.y, Sprites.Barrel).setOrigin(1, 1);
+        barrel.setVelocityX(spawner.speed);
+
+        this.time.addEvent({
+          delay: spawner.lifespan,
+          repeat: 0,
+          callbackScope: this,
+          callback: () => {
+            barrel.destroy();
+          },
+        });
+      },
+    });
+  }
 
   create() {
     this.fpsText = new FpsText(this).setDepth(100);
@@ -106,12 +132,13 @@ export default class MainScene extends Phaser.Scene {
     this.setupFireEnemies();
     this.setupPlayer();
     this.setupCursor();
+    this.setupSpawner();
 
     this.cameras.main.setBounds(0, 0, this.screenWidth, this.screenHeigth);
     this.cameras.main.startFollow(this.player);
 
     this.endgame = false;
-    this.physics.add.collider(this.platforms, [this.player, this.goal]);
+    this.physics.add.collider(this.platforms, [this.player, this.goal, this.barrels]);
     this.physics.add.overlap(this.player, [this.fires, this.goal], this.restartGame, null, this);
   }
 
