@@ -1,27 +1,36 @@
 {
+  "world": {
+    "width": 360,
+    "height": 700
+  },
+  "spawner": {
+    "interval": 1000,
+    "speed": 10,
+    "lifeSpan": 5000
+  },
   "platforms": [
-    { "x": 150, "y": 450, "numTiles": 6, "key": "block" },
-    { "x": 0, "y": 330, "numTiles": 8, "key": "block" },
+    { "x": 150, "y": 500, "numTiles": 6, "key": "block" },
+    { "x": 0, "y": 370, "numTiles": 8, "key": "block" },
     { "x": 72, "y": 210, "numTiles": 8, "key": "block" },
-    { "x": 0, "y": 90, "numTiles": 7, "key": "block" },
-    { "x": 0, "y": 560, "numTiles": 1, "key": "ground" }
+    { "x": 0, "y": 70, "numTiles": 7, "key": "block" },
+    { "x": 0, "y": 650, "numTiles": 1, "key": "ground" }
   ],
   "fireEnemies": [
     {
       "x": 265,
-      "y": 187
+      "y": 210
     },
     {
       "x": 160,
-      "y": 187
+      "y": 210
     },
     {
       "x": 105,
-      "y": 307
+      "y": 370
     },
     {
       "x": 120,
-      "y": 538
+      "y": 650
     }
   ],
   "player": {
@@ -30,6 +39,6 @@
   },
   "goal": {
     "x": 0,
-    "y": 40
+    "y": 30
   }
 }

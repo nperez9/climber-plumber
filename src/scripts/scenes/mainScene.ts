@@ -18,6 +18,7 @@ export default class MainScene extends Phaser.Scene {
   private goal;
   private platforms: Group;
   private fires: Group;
+  private barrels: Group;
   private cursors: Cursors;
   private levelData: LevelData;
 
@@ -26,20 +27,20 @@ export default class MainScene extends Phaser.Scene {
   }
 
   private setupLevel(): void {
-    this.levelData = this.cache.json.get(LEVELS.One);
+    this.add.sprite(0, 0, Sprites.Backgorund).setOrigin(0);
 
     this.platforms = this.physics.add.staticGroup(); // better perforamnce
     this.levelData.platforms.map(({ x, y, key, numTiles }) => {
       let plaform;
       if (numTiles > 1) {
-        // One Way
+        // other way in case of constant sizes
         // const { width, height } = TILES_SIZE[key];
         const { width, height } = getSpriteDimension(this, key);
         plaform = this.add.tileSprite(x, y, numTiles * width, height, key);
       } else {
         plaform = this.add.sprite(x, y, key);
       }
-      plaform.setOrigin(0);
+      plaform.setOrigin(0, 0);
       this.physics.add.existing(plaform, true);
       this.platforms.add(plaform);
     });
@@ -51,7 +52,7 @@ export default class MainScene extends Phaser.Scene {
       immovable: false,
     });
     this.levelData.fireEnemies.map(({ x, y }) => {
-      const fire = this.add.sprite(x, y, Sprites.Fire).setOrigin(0);
+      const fire = this.add.sprite(x, y, Sprites.Fire).setOrigin(0, 1);
       fire.anims.play('burn');
       this.fires.add(fire);
 
@@ -74,7 +75,7 @@ export default class MainScene extends Phaser.Scene {
     this.player.body.setCollideWorldBounds(true);
 
     const goalPos = this.levelData.goal;
-    this.goal = this.physics.add.sprite(goalPos.x, goalPos.y, Sprites.Gorilla).setOrigin(0);
+    this.goal = this.physics.add.sprite(goalPos.x, goalPos.y, Sprites.Gorilla).setOrigin(0, 1);
   }
 
   private setupCursor(): void {
@@ -90,22 +91,23 @@ export default class MainScene extends Phaser.Scene {
     }
   }
 
+  private setupSpawner(): void {}
+
   create() {
     this.fpsText = new FpsText(this).setDepth(100);
-    this.screenWidth = this.sys.game.config.width as number;
-    this.screenHeigth = this.sys.game.config.height as number;
+    this.levelData = this.cache.json.get(LEVELS.One);
+    this.screenWidth = this.levelData.world.width;
+    this.screenHeigth = this.levelData.world.height;
 
     this.physics.world.bounds.width = this.screenWidth;
     this.physics.world.bounds.height = this.screenHeigth;
-    this.cameras.main.setBounds(0, 0, this.screenWidth, this.screenHeigth);
-
-    this.add.sprite(0, 0, Sprites.Backgorund).setOrigin(0);
 
     this.setupLevel();
     this.setupFireEnemies();
     this.setupPlayer();
     this.setupCursor();
 
+    this.cameras.main.setBounds(0, 0, this.screenWidth, this.screenHeigth);
     this.cameras.main.startFollow(this.player);
 
     this.endgame = false;
