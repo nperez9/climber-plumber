@@ -147,7 +147,8 @@ export default class MainScene extends Phaser.Scene {
 
     this.endgame = false;
     this.physics.add.collider(this.platforms, [this.player, this.goal, this.barrels]);
-    this.physics.add.overlap(this.player, [this.fires, this.goal, this.barrels], this.restartGame, null, this);
+    this.physics.add.overlap(this.player, [this.fires, this.barrels], this.restartGame, null, this);
+    this.physics.add.overlap(this.player, this.goal, this.winGame, null, this);
   }
 
   update() {
@@ -160,10 +161,20 @@ export default class MainScene extends Phaser.Scene {
   }
 
   private restartGame(sourceSprite, targetSprite): void {
-    this.cameras.main.fade(500);
+    this.cameras.main.fade(200);
     this.endgame = true;
     this.cameras.main.on('camerafadeoutcomplete', () => {
       this.scene.restart();
+    });
+  }
+
+  private winGame(): void {
+    if (!this.endgame) {
+      this.cameras.main.flash(300);
+    }
+    this.endgame = true;
+    this.cameras.main.on('cameraflashcomplete', () => {
+      this.scene.start('WinScene');
     });
   }
 
